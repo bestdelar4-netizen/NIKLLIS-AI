@@ -1,76 +1,61 @@
-from datetime import datetime
+"""
+NIKLLIS-AI - Voice & Task Assistant Prototype
+"""
+
+import json
+import os
 import time
-import requests
-
-# ==========================================
-# 1. إعدادات فيسبوك (Facebook API Configuration)
-# ==========================================
-FB_PAGE_ID = "YOUR_PAGE_ID"
-FB_ACCESS_TOKEN = "YOUR_PAGE_ACCESS_TOKEN"
 
 
-def schedule_facebook_post(message, delay_seconds=3600):
-  """دالة لجدولة منشور على فيسبوك بعد مدة زمنية بالثواني"""
-  url = f"https://graph.facebook.com/v18.0/{FB_PAGE_ID}/feed"
-  target_time = int(time.time()) + delay_seconds
+class NikllisAssistant:
 
-  payload = {
-      "message": message,
-      "published": False,
-      "scheduled_publish_time": target_time,
-      "access_token": FB_ACCESS_TOKEN,
-  }
+  def __init__(self):
+    self.name = "NIKLLIS-AI"
+    self.tasks = []
+    print(f"🤖 {self.name} initialized...")
 
-  try:
-    response = requests.post(url, data=payload)
-    result = response.json()
-    if "id" in result:
-      print(f"✅ تم جدولة البوست بنجاح! ID: {result['id']}")
+  def add_reminder(self, task_name, time_str):
+    """إضافة تذكير (مثل: دواء، تمرين، درس)"""
+    reminder = {"task": task_name, "time": time_str}
+    self.tasks.append(reminder)
+    print(f"✅ تم تسجيل التذكير: {task_name} في موعد {time_str}")
+
+  def make_call(self, contact_name):
+    """تنفيذ إيماءة الاتصال برقم"""
+    print(f"📞 جارٍ طلب الاتصال بـ: {contact_name}...")
+
+  def process_command(self, command):
+    """تحليل الأوامر الصوتية أو النصية"""
+    cmd = command.lower().strip()
+
+    if "اتصل" in cmd or "رن" in cmd:
+      name = cmd.replace("اتصل بـ", "").replace("رن على", "").strip()
+      self.make_call(name)
+
+    elif "سجل" in cmd or "تذكير" in cmd:
+      # مثال بسيط: سجل دواء الساعة 8
+      self.add_reminder(task_name=cmd, time_str="الموعد المspecified")
+
     else:
-      print(f"❌ خطأ من فيسبوك: {result}")
-  except Exception as e:
-    print(f"❌ فشل الاتصال بفيسبوك: {e}")
+      print(f"🤖 استلمت الأمر: '{command}'")
 
 
-# ==========================================
-# 2. المساعد الذكي NIKLLIS-AI
-# ==========================================
-def assistant_loop():
+def main():
+  assistant = NikllisAssistant()
   print("=" * 40)
-  print("🤖 NIKLLIS-AI جاهز ويعمل بنجاح على Termux!")
-  print("💡 يمكنك استخدام الإملاء الصوتي من الكيبورد!")
+  print("🤖 مرحباً بك في NIKLLIS-AI")
   print("=" * 40)
 
   while True:
     try:
-      command = input("\n💬 اكتب أمرك أو استخدم إملاء المايك (اكتب 'خروج' للإنهاء): ").lower()
-
-      if command.strip() == "":
-        continue
-
-      if "خروج" in command or "exit" in command:
-        print("👋 تم إيقاف NIKLLIS-AI.")
+      cmd = input("\n💬 ادخل أمرك (أو اكتب 'exit' للإنهاء): ")
+      if cmd.strip().lower() == "exit":
+        print("👋 إيقاف التشغيل...")
         break
-
-      # تحليل الأوامر
-      if "بوست" in command or "نزل" in command or "جدولة" in command:
-        print("🤖 جارٍ جدولة البوست على فيسبوك...")
-        schedule_facebook_post(
-            message=f"منشور تلقائي من NIKLLIS-AI: {command}",
-            delay_seconds=600,  # بعد 10 دقائق
-        )
-
-      elif "رن" in command or "اتصل" in command:
-        name = command.replace("رن على", "").replace("اتصل", "").strip()
-        print(f"📞 جارٍ تنفيذ طلب الاتصال بـ: {name}...")
-
-      else:
-        print(f"🤖 استلمت الأمر: '{command}' .. جارٍ المعالجة.")
-
+      assistant.process_command(cmd)
     except KeyboardInterrupt:
-      print("\n👋 تم الخروج.")
       break
 
 
 if __name__ == "__main__":
-  assistant_loop()
+  main()
