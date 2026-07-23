@@ -1,8 +1,6 @@
 from datetime import datetime
-import threading
 import time
 import requests
-import speech_recognition as sr
 
 # ==========================================
 # 1. إعدادات فيسبوك (Facebook API Configuration)
@@ -35,44 +33,44 @@ def schedule_facebook_post(message, delay_seconds=3600):
 
 
 # ==========================================
-# 2. محرك الاستماع للأوامر الصوتية
+# 2. المساعد الذكي NIKLLIS-AI
 # ==========================================
-def voice_assistant_loop():
-  recognizer = sr.Recognizer()
-
-  print("🤖 NIKLLIS-AI جاهز ويعمل على Termux...")
-  print("🤖 حالة السكون (Idle Mode)... الروبوت يعمل في الخلفية!")
+def assistant_loop():
+  print("=" * 40)
+  print("🤖 NIKLLIS-AI جاهز ويعمل بنجاح على Termux!")
+  print("💡 يمكنك استخدام الإملاء الصوتي من الكيبورد!")
+  print("=" * 40)
 
   while True:
-    with sr.Microphone() as source:
-      print("\n🎤 جارٍ الاستماع للأنشطة والأوامر...")
-      recognizer.adjust_for_ambient_noise(source, duration=0.5)
-      try:
-        audio = recognizer.listen(source, timeout=5, phrase_time_limit=10)
-        command = recognizer.recognize_google(
-            audio, language="ar-EG"
-        ).lower()
-        print(f"🗣️ الأسلوب/الأمر المسموع: {command}")
+    try:
+      command = input("\n💬 اكتب أمرك أو استخدم إملاء المايك (اكتب 'خروج' للإنهاء): ").lower()
 
-        # تحليل الأوامر الصوتية
-        if "بوست" in command or "نزل" in command:
-          print("🤖 جارٍ جدولة البوست على فيسبوك...")
-          schedule_facebook_post(
-              message=f"منشور تلقائي من NIKLLIS-AI: {command}",
-              delay_seconds=600,  # بعد 10 دقائق كمثال
-          )
+      if command.strip() == "":
+        continue
 
-        elif "رن على" in command or "اتصل" in command:
-          name = command.replace("رن على", "").replace("اتصل", "").strip()
-          print(f"📞 جارٍ طلب الاتصال بـ: {name}...")
+      if "خروج" in command or "exit" in command:
+        print("👋 تم إيقاف NIKLLIS-AI.")
+        break
 
-      except (sr.WaitTimeoutError, sr.UnknownValueError):
-        pass
-      except Exception as e:
-        print(f"⚠️ خطأ أثناء الاستماع: {e}")
+      # تحليل الأوامر
+      if "بوست" in command or "نزل" in command or "جدولة" in command:
+        print("🤖 جارٍ جدولة البوست على فيسبوك...")
+        schedule_facebook_post(
+            message=f"منشور تلقائي من NIKLLIS-AI: {command}",
+            delay_seconds=600,  # بعد 10 دقائق
+        )
 
-    time.sleep(1)
+      elif "رن" in command or "اتصل" in command:
+        name = command.replace("رن على", "").replace("اتصل", "").strip()
+        print(f"📞 جارٍ تنفيذ طلب الاتصال بـ: {name}...")
+
+      else:
+        print(f"🤖 استلمت الأمر: '{command}' .. جارٍ المعالجة.")
+
+    except KeyboardInterrupt:
+      print("\n👋 تم الخروج.")
+      break
 
 
 if __name__ == "__main__":
-  voice_assistant_loop()
+  assistant_loop()
