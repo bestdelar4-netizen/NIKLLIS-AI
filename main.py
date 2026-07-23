@@ -1,50 +1,91 @@
 """
-NIKLLIS-AI - Voice & Task Assistant Prototype
+NIKLLIS-AI - Core Logic for Voice & Task Assistant
 """
 
 import json
+from datetime import datetime
 import os
-import time
+import subprocess
 
 
 class NikllisAssistant:
 
   def __init__(self):
     self.name = "NIKLLIS-AI"
-    self.tasks = []
-    print(f"🤖 {self.name} initialized...")
+    self.reminders_file = "reminders.json"
+    self.load_reminders()
+    print(f"🤖 {self.name} initialized & ready...")
 
-  def add_reminder(self, task_name, time_str):
-    """إضافة تذكير (مثل: دواء، تمرين، درس)"""
-    reminder = {"task": task_name, "time": time_str}
-    self.tasks.append(reminder)
-    print(f"✅ تم تسجيل التذكير: {task_name} في موعد {time_str}")
+  def load_reminders(self):
+    """تحميل التذكيرات من ملف محلي"""
+    if os.path.exists(self.reminders_file):
+      try:
+        with open(self.reminders_file, "r", encoding="utf-8") as f:
+          self.reminders = json.load(f)
+      except Exception:
+        self.reminders = []
+    else:
+      self.reminders = []
+
+  def save_reminders(self):
+    """حفظ التذكيرات"""
+    with open(self.reminders_file, "w", encoding="utf-8") as f:
+      json.dump(self.reminders, f, ensure_ascii=False, indent=4)
+
+  def add_reminder(self, task_type, detail):
+    """إضافة جدول زمني (دواء، تمرين، درس)"""
+    now = datetime.now().strftime("%Y-%m-%d %H:%M")
+    entry = {"type": task_type, "detail": detail, "created_at": now}
+    self.reminders.append(entry)
+    self.save_reminders()
+    print(f"✅ تم تسجيل {task_type}: '{detail}' بنجاح!")
 
   def make_call(self, contact_name):
-    """تنفيذ إيماءة الاتصال برقم"""
-    print(f"📞 جارٍ طلب الاتصال بـ: {contact_name}...")
+    """تنفيذ الاتصال بالأسماء"""
+    print(f"📞 جارٍ الاتصال بـ: {contact_name}...")
+    # تنفيذ أمر الاتصال في أندرويد عبر Termux API
+    os.system(f"termux-telephony-call '{contact_name}'")
 
   def process_command(self, command):
     """تحليل الأوامر الصوتية أو النصية"""
     cmd = command.lower().strip()
 
+    # 1. الاتصال
     if "اتصل" in cmd or "رن" in cmd:
-      name = cmd.replace("اتصل بـ", "").replace("رن على", "").strip()
+      name = (
+          cmd.replace("اتصل بـ", "")
+          .replace("اتصل", "")
+          .replace("رن على", "")
+          .replace("رن", "")
+          .strip()
+      )
       self.make_call(name)
 
-    elif "سجل" in cmd or "تذكير" in cmd:
-      # مثال بسيط: سجل دواء الساعة 8
-      self.add_reminder(task_name=cmd, time_str="الموعد المspecified")
+    # 2. جدولة أدوية
+    elif "دواء" in cmd or "علاج" in cmd:
+      self.add_reminder("ميعاد دواء", cmd)
+
+    # 3. جدولة تمارين أو دروس
+    elif "تمرين" in cmd or "درس" in cmd or "سجل" in cmd:
+      self.add_reminder("جدول زمني/تذكير", cmd)
+
+    # 4. عرض التذكيرات
+    elif "جدولي" in cmd or "تذكيراتي" in cmd or "مواعيدي" in cmd:
+      print("\n📋 جدولك الحالي:")
+      if not self.reminders:
+        print("لا توجد مواعيد مسجلة حتى الآن.")
+      for i, item in enumerate(self.reminders, 1):
+        print(f"{i}. [{item['type']}] {item['detail']}")
 
     else:
-      print(f"🤖 استلمت الأمر: '{command}'")
+      print(f"🤖 NIKLLIS-AI استلم الأمر: '{command}'")
 
 
 def main():
   assistant = NikllisAssistant()
-  print("=" * 40)
-  print("🤖 مرحباً بك في NIKLLIS-AI")
-  print("=" * 40)
+  print("=" * 45)
+  print("🤖 مرحباً بك في مشروع NIKLLIS-AI")
+  print("=" * 45)
 
   while True:
     try:
@@ -52,8 +93,10 @@ def main():
       if cmd.strip().lower() == "exit":
         print("👋 إيقاف التشغيل...")
         break
-      assistant.process_command(cmd)
+      if cmd.strip():
+        assistant.process_command(cmd)
     except KeyboardInterrupt:
+      print("\n👋 إيقاف التشغيل...")
       break
 
 
