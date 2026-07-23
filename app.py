@@ -1,72 +1,63 @@
 """
-NIKLLIS-AI - Desktop/Android Assistant GUI
+NIKLLIS-AI - Web GUI Interface for Mobile
 """
 
+import json
 import os
-import tkinter as tk
-from tkinter import messagebox
+from flask import Flask, jsonify, request
+
+app = Flask(__name__)
 
 
-class NikllisApp:
+@app.route("/")
+def home():
+  return """
+    <!DOCTYPE html>
+    <html lang="ar" dir="rtl">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>NIKLLIS-AI Assistant</title>
+        <style>
+            body { font-family: sans-serif; background-color: #121212; color: #fff; text-align: center; padding: 20px; }
+            .card { background: #1e1e1e; border-radius: 15px; padding: 20px; margin: auto; max-width: 400px; box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
+            .robot { width: 180px; height: auto; border-radius: 10px; margin: 15px 0; }
+            button { background: #007bff; color: white; border: none; padding: 12px 25px; border-radius: 25px; font-size: 16px; cursor: pointer; }
+            button:active { background: #0056b3; }
+            #status { margin-top: 15px; color: #00ffcc; font-weight: bold; }
+        </style>
+    </head>
+    <body>
+        <div class="card">
+            <h2>🤖 NIKLLIS-AI</h2>
+            <p>المساعد الشخصي الذكي</p>
+            <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExOHp1eHN3Ymc5aTh3NDV3eTYycTFiaXpjdnd4czM4YzI1eHgzYXpmeSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3o7TKSjRrfIPjeiVyM/giphy.gif" class="robot" alt="Robot Mascot">
+            <div>
+                <button onclick="speak()">🎙️ اضغط للتحدث</button>
+            </div>
+            <div id="status">جاهز للاستماع...</div>
+        </div>
 
-  def __init__(self, root):
-    self.root = root
-    self.root.title("NIKLLIS-AI Assistant")
-    self.root.geometry("350x500")
-    self.root.configure(bg="#1e1e2e")
+        <script>
+            function speak() {
+                document.getElementById('status').innerText = '🎤 جاري التفاعل واستلام الأمر...';
+                fetch('/run_mic')
+                .then(res => res.json())
+                .then(data => {
+                    document.getElementById('status').innerText = data.message;
+                });
+            }
+        </script>
+    </body>
+    </html>
+    """
 
-    # Title Label
-    self.title_label = tk.Label(
-        root,
-        text="🤖 NIKLLIS-AI",
-        font=("Helvetica", 20, "bold"),
-        fg="#cba6f7",
-        bg="#1e1e2e",
-    )
-    self.title_label.pack(pady=20)
 
-    # Status Label
-    self.status_label = tk.Label(
-        root,
-        text="👋 أنا نكليس جاهز لتلقي أوامرك",
-        font=("Helvetica", 12),
-        fg="#bac2de",
-        bg="#1e1e2e",
-    )
-    self.status_label.pack(pady=10)
-
-    # Speak / Mic Button
-    self.mic_btn = tk.Button(
-        root,
-        text="🎙️ التحدث / تنفيذ أمر",
-        font=("Helvetica", 14, "bold"),
-        bg="#89b4fa",
-        fg="#11111b",
-        padx=10,
-        pady=5,
-        command=self.run_command,
-    )
-    self.mic_btn.pack(pady=20)
-
-    # Output Box
-    self.output_box = tk.Text(
-        root,
-        height=10,
-        width=35,
-        bg="#313244",
-        fg="#a6adc8",
-        font=("Consolas", 10),
-    )
-    self.output_box.pack(pady=10)
-
-  def run_command(self):
-    self.status_label.config(text="🎤 جاري الاستماع والاستجابة...")
-    self.output_box.insert(tk.END, "🤖 NIKLLIS: تم الضغط على المايك!\n")
-    # استدعاء الصوت
-    os.system("termux-tts-speak -l ar 'أنا أستمع إليك الآن'")
+@app.route("/run_mic")
+def run_mic():
+  os.system("termux-tts-speak -l ar 'أنا أستمع إليك الآن'")
+  return jsonify({"message": "✅ تم تفعيل المساعد الصوتي!"})
 
 
 if __name__ == "__main__":
-  root = tk.Tk()
-  app = NikllisApp(root)
-  root.mainloop()
+  app.run(host="0.0.0.0", port=5000)
