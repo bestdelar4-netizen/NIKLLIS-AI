@@ -85,7 +85,7 @@ def home():
         <style>
             body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #0f172a; color: #fff; text-align: center; padding: 20px; }
             .card { background: #1e293b; border-radius: 20px; padding: 25px; margin: auto; max-width: 400px; box-shadow: 0 10px 25px rgba(0,0,0,0.6); border: 1px solid #334155; }
-            .robot { width: 180px; height: 180px; border-radius: 50%; object-fit: cover; margin: 15px 0; border: 3px solid #38bdf8; box-shadow: 0 0 15px #38bdf888; }
+            .robot { width: 160px; height: 160px; margin: 15px auto; display: block; filter: drop-shadow(0 0 10px #38bdf888); }
             input { width: 80%; padding: 12px; border-radius: 10px; border: 1px solid #475569; background: #0f172a; color: white; font-size: 15px; margin-bottom: 12px; text-align: center; outline: none; }
             button { background: #38bdf8; color: #0f172a; border: none; padding: 12px 25px; border-radius: 10px; font-size: 16px; cursor: pointer; font-weight: bold; width: 85%; }
             button:active { background: #0284c7; }
@@ -97,7 +97,28 @@ def home():
             <h2 style="color: #38bdf8; margin-bottom: 5px;">🤖 NIKLLIS-AI</h2>
             <p style="color: #94a3b8; font-size: 14px;">المساعد الشخصي الذكي</p>
             
-            <img src="https://i.ibb.co/3s45172/robot-3d.gif" class="robot" alt="AI Robot Mascot">
+            <svg class="robot" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="100" cy="100" r="90" fill="#0f172a" stroke="#38bdf8" stroke-width="4"/>
+              <!-- Antennas -->
+              <line x1="100" y1="35" x2="100" y2="15" stroke="#38bdf8" stroke-width="6" stroke-linecap="round"/>
+              <circle cx="100" cy="12" r="8" fill="#f43f5e"/>
+              <!-- Ears -->
+              <rect x="25" y="75" width="15" height="30" rx="5" fill="#38bdf8"/>
+              <rect x="160" y="75" width="15" height="30" rx="5" fill="#38bdf8"/>
+              <!-- Head -->
+              <rect x="35" y="35" width="130" height="110" rx="25" fill="#1e293b" stroke="#38bdf8" stroke-width="4"/>
+              <!-- Eyes Screen -->
+              <rect x="50" y="55" width="100" height="45" rx="15" fill="#0f172a"/>
+              <!-- Eyes -->
+              <circle cx="75" cy="77" r="12" fill="#38bdf8"/>
+              <circle cx="125" cy="77" r="12" fill="#38bdf8"/>
+              <circle cx="78" cy="74" r="4" fill="#fff"/>
+              <circle cx="128" cy="74" r="4" fill="#fff"/>
+              <!-- Mouth / Cheeks -->
+              <circle cx="60" cy="118" r="6" fill="#f43f5e" opacity="0.6"/>
+              <circle cx="140" cy="118" r="6" fill="#f43f5e" opacity="0.6"/>
+              <path d="M 80 115 Q 100 130 120 115" stroke="#38bdf8" stroke-width="5" stroke-linecap="round" fill="none"/>
+            </svg>
             
             <div>
                 <input type="text" id="cmdInput" placeholder="اكتب أمرك هنا (مثلاً: اتصل بـ احمد)">
