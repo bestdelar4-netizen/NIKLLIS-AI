@@ -1,10 +1,11 @@
+cat << 'EOF' > app.py
 """
 NIKLLIS-AI - Interactive Web Assistant
 """
 
-from datetime import datetime
 import json
 import os
+from datetime import datetime
 from flask import Flask, jsonify, request
 
 app = Flask(__name__)
@@ -12,62 +13,62 @@ app = Flask(__name__)
 
 class NikllisCore:
 
-  def __init__(self):
-    self.reminders_file = "reminders.json"
-    self.load_reminders()
+    def __init__(self):
+        self.reminders_file = "reminders.json"
+        self.load_reminders()
 
-  def load_reminders(self):
-    if os.path.exists(self.reminders_file):
-      try:
-        with open(self.reminders_file, "r", encoding="utf-8") as f:
-          self.reminders = json.load(f)
-      except Exception:
-        self.reminders = []
-    else:
-      self.reminders = []
+    def load_reminders(self):
+        if os.path.exists(self.reminders_file):
+            try:
+                with open(self.reminders_file, "r", encoding="utf-8") as f:
+                    self.reminders = json.load(f)
+            except Exception:
+                self.reminders = []
+        else:
+            self.reminders = []
 
-  def save_reminders(self):
-    with open(self.reminders_file, "w", encoding="utf-8") as f:
-      json.dump(self.reminders, f, ensure_ascii=False, indent=4)
+    def save_reminders(self):
+        with open(self.reminders_file, "w", encoding="utf-8") as f:
+            json.dump(self.reminders, f, ensure_ascii=False, indent=4)
 
-  def speak(self, text):
-    safe_text = text.replace("'", "").replace('"', "")
-    os.system(f"termux-tts-speak -l ar '{safe_text}' &")
+    def speak(self, text):
+        safe_text = text.replace("'", "").replace('"', "")
+        os.system(f"termux-tts-speak -l ar '{safe_text}' &")
 
-  def process(self, cmd):
-    cmd = cmd.lower().strip()
+    def process(self, cmd):
+        cmd = cmd.lower().strip()
 
-    if "اتصل" in cmd or "رن" in cmd:
-      name = (
-          cmd.replace("اتصل بـ", "")
-          .replace("اتصل", "")
-          .replace("رن على", "")
-          .replace("رن", "")
-          .strip()
-      )
-      self.speak(f"جاري الاتصال بـ {name}")
-      os.system(f"termux-telephony-call '{name}'")
-      return f"📞 جاري الاتصال بـ: {name}"
+        if "اتصل" in cmd or "رن" in cmd:
+            name = (
+                cmd.replace("اتصل بـ", "")
+                .replace("اتصل", "")
+                .replace("رن على", "")
+                .replace("رن", "")
+                .strip()
+            )
+            self.speak(f"جاري الاتصال بـ {name}")
+            os.system(f"termux-telephony-call '{name}'")
+            return f"📞 جاري الاتصال بـ: {name}"
 
-    elif "دواء" in cmd or "علاج" in cmd or "درس" in cmd or "سجل" in cmd:
-      now = datetime.now().strftime("%Y-%m-%d %H:%M")
-      entry = {"detail": cmd, "created_at": now}
-      self.reminders.append(entry)
-      self.save_reminders()
-      self.speak("تم تسجيل الميعاد بنجاح")
-      return f"✅ تم حفظ التذكير: {cmd}"
+        elif "دواء" in cmd or "علاج" in cmd or "درس" in cmd or "سجل" in cmd:
+            now = datetime.now().strftime("%Y-%m-%d %H:%M")
+            entry = {"detail": cmd, "created_at": now}
+            self.reminders.append(entry)
+            self.save_reminders()
+            self.speak("تم تسجيل الميعاد بنجاح")
+            return f"✅ تم حفظ التذكير: {cmd}"
 
-    elif "مواعيدي" in cmd or "جدولي" in cmd or "تذكيراتي" in cmd:
-      if not self.reminders:
-        msg = "لا توجد مواعيد مسجلة حالياً."
-      else:
-        msg = f"لديك {len(self.reminders)} مواعيد مسجلة."
-      self.speak(msg)
-      return msg
+        elif "مواعيدي" in cmd or "جدولي" in cmd or "تذكيراتي" in cmd:
+            if not self.reminders:
+                msg = "لا توجد مواعيد مسجلة حالياً."
+            else:
+                msg = f"لديك {len(self.reminders)} مواعيد مسجلة."
+            self.speak(msg)
+            return msg
 
-    else:
-      self.speak("استلمت أمرك وجاري معالجته")
-      return f"🤖 استلمت الأمر: '{cmd}'"
+        else:
+            self.speak("استلمت أمرك وجاري معالجته")
+            return f"🤖 استلمت الأمر: '{cmd}'"
 
 
 core = NikllisCore()
@@ -75,7 +76,7 @@ core = NikllisCore()
 
 @app.route("/")
 def home():
-  return """
+    return """
     <!DOCTYPE html>
     <html lang="ar" dir="rtl">
     <head>
@@ -97,7 +98,7 @@ def home():
             <h2 style="color: #38bdf8; margin-bottom: 5px;">🤖 NIKLLIS-AI</h2>
             <p style="color: #94a3b8; font-size: 14px;">المساعد الشخصي الذكي</p>
             
-            <img src="https://i.gifer.com/7S7g.gif" class="robot" alt="AI Robot Mascot">
+            <img src="https://i.ibb.co/3s45172/robot-3d.gif" class="robot" alt="AI Robot Mascot">
             
             <div>
                 <input type="text" id="cmdInput" placeholder="اكتب أمرك هنا (مثلاً: اتصل بـ احمد)">
@@ -130,10 +131,11 @@ def home():
 
 @app.route("/process")
 def process():
-  cmd = request.args.get("cmd", "")
-  reply = core.process(cmd)
-  return jsonify({"reply": reply})
+    cmd = request.args.get("cmd", "")
+    reply = core.process(cmd)
+    return jsonify({"reply": reply})
 
 
 if __name__ == "__main__":
-  app.run(host="0.0.0.0", port=5000)
+    app.run(host="0.0.0.0", port=5000)
+EOF
