@@ -1,5 +1,5 @@
 """
-NIKLLIS-AI - Interactive Web Assistant
+NIKLLIS-AI - Hands-Free Always Listening Assistant
 """
 
 import json
@@ -37,6 +37,15 @@ class NikllisCore:
     def process(self, cmd):
         cmd = cmd.lower().strip()
 
+        # تنظيف كلمة النداء لو اتنطقت مع الأمر
+        cmd = (
+            cmd.replace("يا نكليس", "")
+            .replace("نكليس", "")
+            .replace("يا نيكليس", "")
+            .replace("نيكليس", "")
+            .strip()
+        )
+
         if "اتصل" in cmd or "رن" in cmd:
             name = (
                 cmd.replace("اتصل بـ", "")
@@ -45,29 +54,47 @@ class NikllisCore:
                 .replace("رن", "")
                 .strip()
             )
+            reply = f"📞 جاري الاتصال بـ: {name}"
             self.speak(f"جاري الاتصال بـ {name}")
             os.system(f"termux-telephony-call '{name}'")
-            return f"📞 جاري الاتصال بـ: {name}"
+            return reply
 
         elif "دواء" in cmd or "علاج" in cmd or "درس" in cmd or "سجل" in cmd:
             now = datetime.now().strftime("%Y-%m-%d %H:%M")
             entry = {"detail": cmd, "created_at": now}
             self.reminders.append(entry)
             self.save_reminders()
+            reply = f"✅ سجلت التذكير ده: {cmd}"
             self.speak("تم تسجيل الميعاد بنجاح")
-            return f"✅ تم حفظ التذكير: {cmd}"
+            return reply
 
         elif "مواعيدي" in cmd or "جدولي" in cmd or "تذكيراتي" in cmd:
             if not self.reminders:
-                msg = "لا توجد مواعيد مسجلة حالياً."
+                reply = "مافيش أي مواعيد مسجلة حالياً."
             else:
-                msg = f"لديك {len(self.reminders)} مواعيد مسجلة."
-            self.speak(msg)
-            return msg
+                reply = f"عندك {len(self.reminders)} مواعيد مسجلة يا غالي."
+            self.speak(reply)
+            return reply
+
+        elif "ازيك" in cmd or "عامل ايه" in cmd or "اخبارك" in cmd:
+            reply = "أنا سامعك وشغال معاك تمام! تؤمرني بإيه؟"
+            self.speak(reply)
+            return reply
+
+        elif "صباح" in cmd:
+            reply = "صباح الفل والسرور!"
+            self.speak(reply)
+            return reply
+
+        elif "مساء" in cmd:
+            reply = "مساء السعادة والورد!"
+            self.speak(reply)
+            return reply
 
         else:
-            self.speak("استلمت أمرك وجاري معالجته")
-            return f"🤖 استلمت الأمر: '{cmd}'"
+            reply = f"نعم! أومرني، أعمل إيه بخصوص '{cmd}'؟"
+            self.speak("نعم سامعك، تؤمر بإيه؟")
+            return reply
 
 
 core = NikllisCore()
@@ -81,68 +108,123 @@ def home():
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>NIKLLIS-AI Assistant</title>
+        <title>NIKLLIS-AI Always Listening</title>
         <style>
-            body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #0f172a; color: #fff; text-align: center; padding: 20px; }
-            .card { background: #1e293b; border-radius: 20px; padding: 25px; margin: auto; max-width: 400px; box-shadow: 0 10px 25px rgba(0,0,0,0.6); border: 1px solid #334155; }
-            .robot { width: 160px; height: 160px; margin: 15px auto; display: block; filter: drop-shadow(0 0 10px #38bdf888); }
-            input { width: 80%; padding: 12px; border-radius: 10px; border: 1px solid #475569; background: #0f172a; color: white; font-size: 15px; margin-bottom: 12px; text-align: center; outline: none; }
-            button { background: #38bdf8; color: #0f172a; border: none; padding: 12px 25px; border-radius: 10px; font-size: 16px; cursor: pointer; font-weight: bold; width: 85%; }
-            button:active { background: #0284c7; }
-            #status { margin-top: 18px; color: #38bdf8; font-weight: bold; font-size: 15px; min-height: 24px; }
+            body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #0f172a; color: #fff; text-align: center; padding: 10px; margin: 0; }
+            .card { background: #1e293b; border-radius: 20px; padding: 20px; margin: auto; max-width: 400px; box-shadow: 0 10px 25px rgba(0,0,0,0.6); border: 1px solid #334155; }
+            .robot { width: 130px; height: 130px; margin: 10px auto; display: block; filter: drop-shadow(0 0 10px #38bdf888); transition: 0.3s; }
+            .active-pulse { animation: pulse 1s infinite; filter: drop-shadow(0 0 25px #38bdf8) !important; }
+            @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.08); } 100% { transform: scale(1); } }
+            
+            .chat-box { height: 220px; overflow-y: auto; background: #0f172a; border-radius: 12px; padding: 10px; margin-bottom: 12px; text-align: right; border: 1px solid #334155; display: flex; flex-direction: column; gap: 8px; }
+            .msg { padding: 8px 12px; border-radius: 10px; max-width: 80%; font-size: 14px; line-height: 1.4; }
+            .user-msg { background: #38bdf8; color: #0f172a; align-self: flex-start; font-weight: bold; }
+            .ai-msg { background: #334155; color: #f8fafc; align-self: flex-end; }
+            
+            .status-tag { display: inline-block; background: #10b981; color: #0f172a; font-weight: bold; padding: 5px 12px; border-radius: 20px; font-size: 12px; margin-bottom: 10px; }
         </style>
     </head>
-    <body>
+    <body onclick="startContinuousListening()">
         <div class="card">
-            <h2 style="color: #38bdf8; margin-bottom: 5px;">🤖 NIKLLIS-AI</h2>
-            <p style="color: #94a3b8; font-size: 14px;">المساعد الشخصي الذكي</p>
+            <h2 style="color: #38bdf8; margin: 0;">🤖 NIKLLIS-AI</h2>
+            <div id="statusTag" class="status-tag">🎧 المساعد يستمع الآن... نادِ عليه: "نكليس"</div>
             
-            <svg class="robot" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+            <svg id="robotSvg" class="robot active-pulse" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
               <circle cx="100" cy="100" r="90" fill="#0f172a" stroke="#38bdf8" stroke-width="4"/>
-              <!-- Antennas -->
               <line x1="100" y1="35" x2="100" y2="15" stroke="#38bdf8" stroke-width="6" stroke-linecap="round"/>
               <circle cx="100" cy="12" r="8" fill="#f43f5e"/>
-              <!-- Ears -->
               <rect x="25" y="75" width="15" height="30" rx="5" fill="#38bdf8"/>
               <rect x="160" y="75" width="15" height="30" rx="5" fill="#38bdf8"/>
-              <!-- Head -->
               <rect x="35" y="35" width="130" height="110" rx="25" fill="#1e293b" stroke="#38bdf8" stroke-width="4"/>
-              <!-- Eyes Screen -->
               <rect x="50" y="55" width="100" height="45" rx="15" fill="#0f172a"/>
-              <!-- Eyes -->
               <circle cx="75" cy="77" r="12" fill="#38bdf8"/>
               <circle cx="125" cy="77" r="12" fill="#38bdf8"/>
               <circle cx="78" cy="74" r="4" fill="#fff"/>
               <circle cx="128" cy="74" r="4" fill="#fff"/>
-              <!-- Mouth / Cheeks -->
               <circle cx="60" cy="118" r="6" fill="#f43f5e" opacity="0.6"/>
               <circle cx="140" cy="118" r="6" fill="#f43f5e" opacity="0.6"/>
               <path d="M 80 115 Q 100 130 120 115" stroke="#38bdf8" stroke-width="5" stroke-linecap="round" fill="none"/>
             </svg>
             
-            <div>
-                <input type="text" id="cmdInput" placeholder="اكتب أمرك هنا (مثلاً: اتصل بـ احمد)">
-                <button onclick="sendCommand()">🚀 إرسال الأمر</button>
+            <div class="chat-box" id="chatBox">
+                <div class="msg ai-msg">أنا سامعك دايماً! أول ما تنادي وتقول "نكليس" أو "يا نكليس" هرد عليك مباشرةً.</div>
             </div>
-            
-            <div id="status">جاهز للاستماع...</div>
         </div>
 
         <script>
-            function sendCommand() {
-                const input = document.getElementById('cmdInput');
-                const val = input.value.trim();
-                if(!val) return;
+            let recognition;
+            const WAKE_WORDS = ["نكليس", "نيكليس", "يا نكليس", "يا نيكليس"];
+
+            function initSpeech() {
+                if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+                    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                    recognition = new SpeechRecognition();
+                    recognition.lang = 'ar-AR';
+                    recognition.continuous = true; // استماع مستمر بدون توقف
+                    recognition.interimResults = false;
+
+                    recognition.onresult = function(event) {
+                        const lastIndex = event.results.length - 1;
+                        const text = event.results[lastIndex][0].transcript.trim();
+                        console.log("الكلمة المسموعة:", text);
+
+                        // التحقق هل تم المناداة بالكلمة السحرية أو توجيه أمر مباشر
+                        const hasWakeWord = WAKE_WORDS.some(word => text.includes(word));
+
+                        if (hasWakeWord || text.length > 3) {
+                            sendText(text);
+                        }
+                    };
+
+                    recognition.onend = function() {
+                        // إعادة التشغيل تلقائياً لو اتقفل من المتصفح لضمان الاستماع المستمر
+                        recognition.start();
+                    };
+
+                    recognition.onerror = function(event) {
+                        setTimeout(() => { recognition.start(); }, 1000);
+                    };
+
+                    recognition.start();
+                } else {
+                    document.getElementById('statusTag').innerText = '⚠️ المتصفح لا يدعم الاستماع الصوتي';
+                }
+            }
+
+            function startContinuousListening() {
+                if(recognition) {
+                    try { recognition.start(); } catch(e) {}
+                }
+            }
+
+            function appendMsg(text, sender) {
+                const box = document.getElementById('chatBox');
+                const div = document.createElement('div');
+                div.className = 'msg ' + (sender === 'user' ? 'user-msg' : 'ai-msg');
+                div.innerText = text;
+                box.appendChild(div);
+                box.scrollTop = box.scrollHeight;
+            }
+
+            function sendText(text) {
+                appendMsg(text, 'user');
                 
-                document.getElementById('status').innerText = '⏳ جاري المعالجة...';
-                
-                fetch('/process?cmd=' + encodeURIComponent(val))
+                fetch('/process?cmd=' + encodeURIComponent(text))
                 .then(res => res.json())
                 .then(data => {
-                    document.getElementById('status').innerText = data.reply;
-                    input.value = '';
+                    appendMsg(data.reply, 'ai');
+                    
+                    if ('speechSynthesis' in window) {
+                        window.speechSynthesis.cancel(); // إيقاف أي صوت سابق
+                        const utterance = new SpeechSynthesisUtterance(data.reply);
+                        utterance.lang = 'ar-SA';
+                        window.speechSynthesis.speak(utterance);
+                    }
                 });
             }
+
+            // تشغيل الاستماع فور تحميل الصفحة
+            window.onload = initSpeech;
         </script>
     </body>
     </html>
