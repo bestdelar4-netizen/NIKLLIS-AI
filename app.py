@@ -1,5 +1,5 @@
 """
-NIKLLIS-AI - Siri-Class Always-On Voice Assistant
+NIKLLIS-AI - Siri Experience + Interactive Floating Pet
 """
 
 import json
@@ -33,7 +33,7 @@ class NikllisCore:
     def process(self, cmd):
         cmd = cmd.lower().strip()
 
-        # تنظيف الكلمات التعريفية
+        # تنظيف الكلمات
         cmd = (
             cmd.replace("يا نيكليس", "")
             .replace("نيكليس", "")
@@ -43,7 +43,7 @@ class NikllisCore:
         )
 
         if not cmd:
-            return "مرحباً بك، أنا معك وسامعك طوال الوقت."
+            return "مرحباً بك، أنا معك وجاهز لأوامرك."
 
         if "اتصل" in cmd or "رن" in cmd:
             name = (
@@ -65,13 +65,16 @@ class NikllisCore:
         elif "مواعيدي" in cmd or "جدولي" in cmd:
             if not self.reminders:
                 return "سجلك خالي تماماً من المواعيد."
-            return f"لديك {len(self.reminders)} مهام ومواعيد مسجلة."
+            return f"لديك {len(self.reminders)} مهام مسجلة."
 
-        elif "ازيك" in cmd or "من أنت" in cmd:
-            return "أنا نظام NIKLLIS الذكي، معالجك الشخصي والمستمر معك دائماً."
+        elif "العب" in cmd or "لعبة" in cmd:
+            return "يا هلا! أنا مبسوط جداً وقاعد بلعب معاك ع الشاشة، امرني بطلب تاني أو ددش معايا."
+
+        elif "ازيك" in cmd or "مين انت" in cmd:
+            return "أنا مساعدك الذكي وكائنك المرافق، شبه سيري وأفضل كمان!"
 
         else:
-            return f"سمعتك بتقول {cmd}، جارٍ معالجة الطلب."
+            return f"سمعتك تقول: {cmd}، جارٍ التنفيذ."
 
 
 core = NikllisCore()
@@ -85,42 +88,107 @@ def home():
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>NIKLLIS-AI Always-On</title>
+        <title>Siri + Live Pet AI</title>
         <style>
             body { 
                 font-family: -apple-system, BlinkMacSystemFont, sans-serif; 
-                background: radial-gradient(circle, #050b14 0%, #000000 100%); 
-                color: #fff; text-align: center; margin: 0; padding: 0; 
-                height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center;
+                background: #000; color: #fff; margin: 0; padding: 0; 
+                height: 100vh; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; align-items: center;
             }
-            .siri-container { position: relative; width: 140px; height: 140px; display: flex; justify-content: center; align-items: center; cursor: pointer; }
-            .orb {
-                width: 100px; height: 100px; border-radius: 50%;
-                background: linear-gradient(135deg, #00c6ff 0%, #0072ff 50%, #7928ca 100%);
-                box-shadow: 0 0 30px rgba(0, 198, 255, 0.6);
-                animation: pulseOrb 2.5s infinite alternate ease-in-out;
+            
+            /* منطقة الكائن الحي الصغير على الشاشة */
+            .pet-container {
+                margin-top: 15px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                cursor: pointer;
+                animation: floatPet 3s ease-in-out infinite;
+                z-index: 10;
             }
-            .speaking { animation: speakPulse 0.5s infinite alternate !important; background: linear-gradient(135deg, #ff007f, #7928ca) !important; }
-            @keyframes pulseOrb { 0% { transform: scale(0.95); } 100% { transform: scale(1.1); box-shadow: 0 0 50px #7928ca; } }
-            @keyframes speakPulse { 0% { transform: scale(1); } 100% { transform: scale(1.25); box-shadow: 0 0 60px #ff007f; } }
-            .status { margin-top: 20px; color: #a5b4fc; font-size: 14px; }
-            .chat-box { width: 85%; max-width: 300px; height: 100px; overflow-y: auto; background: rgba(255,255,255,0.05); border-radius: 10px; padding: 10px; margin-top: 15px; font-size: 13px; text-align: right; }
+            @keyframes floatPet {
+                0%, 100% { transform: translateY(0px); }
+                50% { transform: translateY(-8px); }
+            }
+            .pet-avatar {
+                width: 60px; height: 60px;
+                background: linear-gradient(135deg, #ff007f, #7928ca);
+                border-radius: 50%;
+                box-shadow: 0 0 15px rgba(255, 0, 127, 0.7);
+                display: flex; justify-content: center; align-items: center;
+                font-size: 28px;
+                border: 2px solid #fff;
+            }
+            .pet-bubble {
+                background: rgba(255, 255, 255, 0.1);
+                backdrop-filter: blur(5px);
+                padding: 4px 10px;
+                border-radius: 12px;
+                font-size: 11px;
+                margin-top: 5px;
+                color: #ffb4fc;
+                border: 1px solid rgba(255,255,255,0.2);
+            }
+
+            /* شاشة سيري المركزية (Siri Orb) */
+            .siri-center {
+                display: flex; flex-direction: column; align-items: center; justify-content: center; flex: 1;
+            }
+            .siri-orb {
+                width: 110px; height: 110px; border-radius: 50%;
+                background: conic-gradient(from 0deg, #3b82f6, #8b5cf6, #ec4899, #3b82f6);
+                animation: rotateOrb 4s linear infinite, pulseSiri 2s ease-in-out infinite alternate;
+                box-shadow: 0 0 30px rgba(139, 92, 246, 0.5);
+                cursor: pointer;
+            }
+            @keyframes rotateOrb { 0% { filter: hue-rotate(0deg); } 100% { filter: hue-rotate(360deg); } }
+            @keyframes pulseSiri { 0% { transform: scale(0.95); } 100% { transform: scale(1.08); } }
+            
+            .speaking-orb {
+                background: conic-gradient(from 0deg, #ef4444, #f59e0b, #10b981, #ef4444) !important;
+                animation: rotateOrb 1.5s linear infinite, speakPulse 0.5s ease-in-out infinite alternate !important;
+            }
+            @keyframes speakPulse { 0% { transform: scale(1); } 100% { transform: scale(1.2); } }
+
+            .status-text { margin-top: 15px; font-size: 13px; color: #94a3b8; letter-spacing: 0.5px; }
+
+            /* صندوق محادثة سفلي مصغر */
+            .chat-bar {
+                width: 90%; max-width: 320px; height: 70px; overflow-y: auto;
+                background: rgba(255,255,255,0.04); border-top: 1px solid rgba(255,255,255,0.1);
+                padding: 8px; font-size: 11px; text-align: right; margin-bottom: 10px; border-radius: 10px;
+            }
         </style>
     </head>
-    <body>
-        <div class="siri-container" onclick="startAlwaysOn()">
-            <div class="orb" id="orb"></div>
+    <body onclick="initVoiceSystem()">
+
+        <!-- الكائن الصغير المرافق على الشاشة -->
+        <div class="pet-container" onclick="feedPet(event)">
+            <div class="pet-avatar" id="petEmoji">👾</div>
+            <div class="pet-bubble" id="petMsg">اضغط عليّ للعب!</div>
         </div>
-        <div class="status" id="status">اضغط مرة واحدة لبدء الاتصال الدائم 🎙️</div>
-        <div class="chat-box" id="chatBox"><div>المساعد جاهز...</div></div>
+
+        <!-- شكل سيري الأساسي -->
+        <div class="siri-center">
+            <div class="siri-orb" id="siriOrb"></div>
+            <div class="status-text" id="statusText">انقر في أي مكان للبدء...</div>
+        </div>
+
+        <div class="chat-bar" id="chatBox">
+            <div>النظام جاهز...</div>
+        </div>
 
         <script>
             let recognition;
+            let isStarted = false;
             let isSpeaking = false;
 
-            function startAlwaysOn() {
+            function initVoiceSystem() {
+                if (isStarted) return;
+                isStarted = true;
+                
                 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-                if (!SpeechRecognition) return alert('المتصفح لا يدعم الصوت');
+                if (!SpeechRecognition) return alert('المتصفح لا يدعم التعرف الصوتي');
 
                 recognition = new SpeechRecognition();
                 recognition.lang = 'ar-SA';
@@ -128,24 +196,43 @@ def home():
                 recognition.interimResults = false;
 
                 recognition.onstart = function() {
-                    document.getElementById('status').innerText = '🟢 متصل دائماً.. اتكلم في أي وقت';
+                    document.getElementById('statusText').innerText = 'سيري تستمع إليك الآن...';
                 };
 
                 recognition.onresult = function(event) {
-                    if (isSpeaking) return; // عدم الاستماع أثناء حديث المساعد
+                    if (isSpeaking) return;
                     const text = event.results[event.results.length - 1][0].transcript.trim();
-                    processCmd(text);
+                    handleCommand(text);
                 };
 
                 recognition.onend = function() {
-                    // إعادة التشغيل تلقائياً للبقاء متصلاً دائماً
                     setTimeout(() => { try { recognition.start(); } catch(e){} }, 300);
                 };
 
-                try { recognition.start(); } catch(e){}
+                try { 
+                    recognition.start(); 
+                    document.getElementById('statusText').innerText = 'متصل وجاهز للأوامر';
+                } catch(e){}
             }
 
-            function processCmd(text) {
+            function feedPet(e) {
+                e.stopPropagation();
+                const emojis = ['👾', '🐱', '🤖', '🦊', '⚡'];
+                const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
+                document.getElementById('petEmoji').innerText = randomEmoji;
+                
+                const phrases = ['شكراً ع الاكل!', 'يلا بينا نلعب!', 'أنا معك يا بطل!', 'منور يا غالي!'];
+                const randomPhrase = phrases[Math.floor(Math.random() * phrases.length)];
+                document.getElementById('petMsg').innerText = randomPhrase;
+                
+                if ('speechSynthesis' in window) {
+                    const utter = new SpeechSynthesisUtterance(randomPhrase);
+                    utter.lang = 'ar-SA';
+                    window.speechSynthesis.speak(utter);
+                }
+            }
+
+            function handleCommand(text) {
                 const box = document.getElementById('chatBox');
                 box.innerHTML += '<div style="color:#38bdf8;">أنت: ' + text + '</div>';
                 box.scrollTop = box.scrollHeight;
@@ -153,25 +240,27 @@ def home():
                 fetch('/process?cmd=' + encodeURIComponent(text))
                 .then(res => res.json())
                 .then(data => {
-                    box.innerHTML += '<div style="color:#c084fc;">نيكليس: ' + data.reply + '</div>';
+                    box.innerHTML += '<div style="color:#c084fc;">سيري: ' + data.reply + '</div>';
                     box.scrollTop = box.scrollHeight;
-                    speakResponse(data.reply);
+                    speakSiri(data.reply);
                 });
             }
 
-            function speakResponse(text) {
+            function speakSiri(text) {
                 if ('speechSynthesis' in window) {
                     window.speechSynthesis.cancel();
                     const utterance = new SpeechSynthesisUtterance(text);
                     utterance.lang = 'ar-SA';
-                    
+
                     utterance.onstart = function() {
                         isSpeaking = true;
-                        document.getElementById('orb').className = 'orb speaking';
+                        document.getElementById('siriOrb').className = 'siri-orb speaking-orb';
+                        document.getElementById('statusText').innerText = 'تتحدث...';
                     };
                     utterance.onend = function() {
                         isSpeaking = false;
-                        document.getElementById('orb').className = 'orb';
+                        document.getElementById('siriOrb').className = 'siri-orb';
+                        document.getElementById('statusText').innerText = 'تستمع...';
                     };
 
                     window.speechSynthesis.speak(utterance);
@@ -182,11 +271,13 @@ def home():
     </html>
     """
 
+
 @app.route("/process")
 def process():
     cmd = request.args.get("cmd", "")
     reply = core.process(cmd)
     return jsonify({"reply": reply})
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
