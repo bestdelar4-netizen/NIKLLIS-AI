@@ -1,5 +1,5 @@
 """
-NIKLLIS-AI - Michelin Character Voice Assistant
+NIKLLIS-AI - Ultimate Siri Competitor Assistant
 """
 
 import json
@@ -39,16 +39,16 @@ class NikllisCore:
 
         # تنظيف كلمات النداء
         cmd = (
-            cmd.replace("يا ميشلان", "")
-            .replace("ميشلان", "")
-            .replace("يا نكليس", "")
-            .replace("نكليس", "")
+            cmd.replace("يا نيكليس", "")
+            .replace("نيكليس", "")
+            .replace("يا سيري", "")
+            .replace("سيري", "")
             .strip()
         )
 
         if not cmd:
-            reply = "أهلاً بيك! أنا ميشلان معك وسامعك كويس، أؤمرني؟"
-            self.speak("أهلاً بيك! أنا ميشلان معك وسامعك كويس")
+            reply = "مرحباً بك، أنا نيكليس معك وجاهز لأوامرك."
+            self.speak(reply)
             return reply
 
         if "اتصل" in cmd or "رن" in cmd:
@@ -59,36 +59,36 @@ class NikllisCore:
                 .replace("رن", "")
                 .strip()
             )
-            reply = f"📞 من عيوني! جاري الاتصال بـ: {name}"
+            reply = f"📞 جاري الاتصال بـ: {name}"
             self.speak(f"جاري الاتصال بـ {name}")
             os.system(f"termux-telephony-call '{name}'")
             return reply
 
-        elif "دواء" in cmd or "علاج" in cmd or "درس" in cmd or "سجل" in cmd:
+        elif "دواء" in cmd or "علاج" in cmd or "ذكرني" in cmd or "سجل" in cmd:
             now = datetime.now().strftime("%Y-%m-%d %H:%M")
             entry = {"detail": cmd, "created_at": now}
             self.reminders.append(entry)
             self.save_reminders()
-            reply = f"✅ ميشلان سجل لك التذكير ده: {cmd}"
-            self.speak("تم تسجيل الميعاد بنجاح")
+            reply = f"🛡️ تم الحفظ في الذاكرة بنجاح: {cmd}"
+            self.speak("تم حفظ التذكير بنجاح")
             return reply
 
-        elif "مواعيدي" in cmd or "جدولي" in cmd or "تذكيراتي" in cmd:
+        elif "مواعيدي" in cmd or "جدولي" in cmd:
             if not self.reminders:
-                reply = "جدولك فاضي ونظيف يا غالي، مافيش أي مواعيد."
+                reply = "سجلك نظيف، لا توجد مواعيد معلقة."
             else:
-                reply = f"عندك {len(self.reminders)} مواعيد مسجلة."
+                reply = f"لديك {len(self.reminders)} مهام مسجلة."
             self.speak(reply)
             return reply
 
-        elif "ازيك" in cmd or "عامل ايه" in cmd or "اخبارك" in cmd:
-            reply = "أنا زي الفل وجاهز لأي خدمة! أنت أخبارك إيه يا بطل؟"
+        elif "ازيك" in cmd or "من أنت" in cmd or "عرفني نفسك" in cmd:
+            reply = "أنا نظام NIKLLIS الذكي، مساعدك الشخصي المتطور."
             self.speak(reply)
             return reply
 
         else:
-            reply = f"ميشلان سمعك بتقول: '{cmd}'.. قولي أعمل إيه فيها؟"
-            self.speak("سمعتك، أساعدك إزاي؟")
+            reply = f"معالجة الطلب: '{cmd}'.. جارٍ التنفيذ."
+            self.speak("تتم المعالجة الآن")
             return reply
 
 
@@ -103,123 +103,113 @@ def home():
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>NIKLLIS-AI - Michelin Assistant</title>
+        <title>NIKLLIS-AI - Neural Assistant</title>
         <style>
-            body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #0b132b; color: #fff; text-align: center; padding: 10px; margin: 0; }
-            .card { background: #1c2541; border-radius: 20px; padding: 20px; margin: auto; max-width: 400px; box-shadow: 0 10px 25px rgba(0,0,0,0.6); border: 2px solid #3a506b; }
-            .michelin-avatar { width: 140px; height: 140px; margin: 10px auto; display: block; filter: drop-shadow(0 0 12px #ffffffaa); }
-            .chat-box { height: 200px; overflow-y: auto; background: #0b132b; border-radius: 12px; padding: 10px; margin-bottom: 12px; text-align: right; border: 1px solid #3a506b; display: flex; flex-direction: column; gap: 8px; }
-            .msg { padding: 8px 12px; border-radius: 10px; max-width: 80%; font-size: 14px; line-height: 1.4; }
-            .user-msg { background: #6fffe9; color: #0b132b; align-self: flex-start; font-weight: bold; }
-            .ai-msg { background: #3a506b; color: #ffffff; align-self: flex-end; }
-            .status-btn { background: #ffc233; color: #0b132b; font-weight: bold; padding: 10px 15px; border-radius: 20px; border: none; font-size: 13px; cursor: pointer; width: 100%; margin-bottom: 10px; }
+            body { 
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+                background: radial-gradient(circle, #050b14 0%, #000000 100%); 
+                color: #fff; text-align: center; margin: 0; padding: 0; 
+                height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center;
+            }
+            .siri-container {
+                position: relative; width: 150px; height: 150px; display: flex; justify-content: center; align-items: center; cursor: pointer;
+            }
+            .orb {
+                width: 100px; height: 100px; border-radius: 50%;
+                background: linear-gradient(135deg, #00c6ff 0%, #0072ff 50%, #7928ca 100%);
+                box-shadow: 0 0 30px rgba(0, 198, 255, 0.6), inset 0 0 20px rgba(255, 255, 255, 0.4);
+                animation: pulseOrb 3s infinite alternate ease-in-out;
+                transition: 0.3s;
+            }
+            @keyframes pulseOrb {
+                0% { transform: scale(0.95); box-shadow: 0 0 20px rgba(0, 198, 255, 0.4); }
+                100% { transform: scale(1.1); box-shadow: 0 0 50px rgba(121, 40, 202, 0.8); }
+            }
+            .listening {
+                background: linear-gradient(135deg, #ff007f 0%, #7928ca 50%, #00c6ff 100%) !important;
+                animation: listenPulse 0.8s infinite alternate !important;
+            }
+            @keyframes listenPulse {
+                0% { transform: scale(1); box-shadow: 0 0 40px #ff007f; }
+                100% { transform: scale(1.25); box-shadow: 0 0 70px #00c6ff; }
+            }
+            .status-text { margin-top: 25px; font-size: 15px; letter-spacing: 1px; color: #a5b4fc; font-weight: 500; }
+            .chat-box { 
+                width: 85%; max-width: 320px; height: 90px; overflow-y: auto; 
+                background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); 
+                border-radius: 12px; padding: 10px; margin-top: 15px; font-size: 12px; text-align: right; 
+                backdrop-filter: blur(10px);
+            }
         </style>
     </head>
     <body>
-        <div class="card">
-            <h2 style="color: #6fffe9; margin: 0;">🏎️ NIKLLIS - ميشلان</h2>
-            <button id="startBtn" class="status-btn" onclick="activateMic()">🔴 اضغط هنا لتفعيل الاستماع المباشر</button>
-            
-            <!-- تصميم شخصية ميشلان (Bibendum) -->
-            <svg class="michelin-avatar" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-              <!-- Background Circle Glow -->
-              <circle cx="100" cy="100" r="90" fill="#1c2541" stroke="#6fffe9" stroke-width="4"/>
-              
-              <!-- Body Rolls (Michelin Tires Body) -->
-              <ellipse cx="100" cy="165" rx="55" ry="18" fill="#f8fafc" stroke="#cbd5e1" stroke-width="3"/>
-              <ellipse cx="100" cy="142" rx="48" ry="16" fill="#ffffff" stroke="#cbd5e1" stroke-width="3"/>
-              <ellipse cx="100" cy="120" rx="40" ry="14" fill="#f8fafc" stroke="#cbd5e1" stroke-width="3"/>
-              
-              <!-- Michelin Sash (الحزام الأزرق الشهير) -->
-              <path d="M 65 110 Q 100 135 135 110" fill="none" stroke="#0284c7" stroke-width="12"/>
-              
-              <!-- Neck Roll -->
-              <ellipse cx="100" cy="98" rx="30" ry="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="3"/>
-              
-              <!-- Head -->
-              <circle cx="100" cy="72" r="28" fill="#ffffff" stroke="#cbd5e1" stroke-width="3"/>
-              
-              <!-- Eyes & Glasses (Michelin style) -->
-              <circle cx="90" cy="68" r="5" fill="#0f172a"/>
-              <circle cx="110" cy="68" r="5" fill="#0f172a"/>
-              <circle cx="91" cy="66" r="1.5" fill="#ffffff"/>
-              <circle cx="111" cy="66" r="1.5" fill="#ffffff"/>
-              
-              <!-- Smile -->
-              <path d="M 88 80 Q 100 92 112 80" stroke="#0f172a" stroke-width="3" stroke-linecap="round" fill="none"/>
-              <!-- Cheeks -->
-              <circle cx="83" cy="78" r="4" fill="#f43f5e" opacity="0.4"/>
-              <circle cx="117" cy="78" r="4" fill="#f43f5e" opacity="0.4"/>
-            </svg>
-            
-            <div class="chat-box" id="chatBox">
-                <div class="msg ai-msg">أهلاً بك! أنا صديقك ميشلان، فعل الاستماع ودردش معي أو نادِ علي برقم أو بـ "ميشلان"!</div>
-            </div>
+        <div class="siri-container" onclick="toggleMic()">
+            <div class="orb" id="orb"></div>
+        </div>
+        
+        <div class="status-text" id="statusText">اضغط على كرة الطاقة للتحدث</div>
+        
+        <div class="chat-box" id="chatBox">
+            <div>النظام جاهز للاستماع...</div>
         </div>
 
         <script>
             let recognition;
             let active = false;
 
-            function activateMic() {
+            function toggleMic() {
                 if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
-                    alert('المتصفح لا يدعم التعرف الصوتي، استخدم متصفح Google Chrome');
+                    alert('متصفحك لا يدعم التعرف الصوتي');
                     return;
                 }
 
-                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-                recognition = new SpeechRecognition();
-                recognition.lang = 'ar-SA';
-                recognition.continuous = true;
-                recognition.interimResults = false;
+                if(!active) {
+                    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                    recognition = new SpeechRecognition();
+                    recognition.lang = 'ar-SA';
+                    recognition.continuous = true;
+                    recognition.interimResults = false;
 
-                recognition.onstart = function() {
-                    active = true;
-                    document.getElementById('startBtn').innerText = '🎧 ميشلان يستمع إليك الآن... نادِ: ميشلان';
-                    document.getElementById('startBtn').style.background = '#6fffe9';
-                    document.getElementById('startBtn').style.color = '#0b132b';
-                };
+                    recognition.onstart = function() {
+                        active = true;
+                        document.getElementById('orb').className = 'orb listening';
+                        document.getElementById('statusText').innerText = 'أنا أستمع إليك الآن...';
+                    };
 
-                recognition.onresult = function(event) {
-                    const lastIndex = event.results.length - 1;
-                    const text = event.results[lastIndex][0].transcript.trim();
-                    console.log("المسموع:", text);
-                    sendText(text);
-                };
+                    recognition.onresult = function(event) {
+                        const lastIndex = event.results.length - 1;
+                        const text = event.results[lastIndex][0].transcript.trim();
+                        sendText(text);
+                    };
 
-                recognition.onerror = function(e) {
-                    restartMic();
-                };
+                    recognition.onerror = function(e) { restartMic(); };
+                    recognition.onend = function() { restartMic(); };
 
-                recognition.onend = function() {
-                    restartMic();
-                };
-
-                try { recognition.start(); } catch(e){}
+                    try { recognition.start(); } catch(e){}
+                } else {
+                    active = false;
+                    if(recognition) recognition.stop();
+                    document.getElementById('orb').className = 'orb';
+                    document.getElementById('statusText').innerText = 'تم الإيقاف. اضغط للتفعيل';
+                }
             }
 
             function restartMic() {
                 if(active) {
-                    setTimeout(() => { try { recognition.start(); } catch(e){} }, 500);
+                    setTimeout(() => { try { recognition.start(); } catch(e){} }, 300);
                 }
             }
 
-            function appendMsg(text, sender) {
-                const box = document.getElementById('chatBox');
-                const div = document.createElement('div');
-                div.className = 'msg ' + (sender === 'user' ? 'user-msg' : 'ai-msg');
-                div.innerText = text;
-                box.appendChild(div);
-                box.scrollTop = box.scrollHeight;
-            }
-
             function sendText(text) {
-                appendMsg(text, 'user');
+                const box = document.getElementById('chatBox');
+                box.innerHTML += '<div style="color:#38bdf8; margin:3px 0;">أنت: ' + text + '</div>';
+                box.scrollTop = box.scrollHeight;
                 
                 fetch('/process?cmd=' + encodeURIComponent(text))
                 .then(res => res.json())
                 .then(data => {
-                    appendMsg(data.reply, 'ai');
+                    box.innerHTML += '<div style="color:#c084fc; margin:3px 0;">نيكليس: ' + data.reply + '</div>';
+                    box.scrollTop = box.scrollHeight;
                     
                     if ('speechSynthesis' in window) {
                         window.speechSynthesis.cancel();
