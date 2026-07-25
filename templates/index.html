@@ -121,10 +121,14 @@
                 };
 
                 recognition.onend = function() {
-                    setTimeout(() => { try { recognition.start(); } catch(e){} }, 300);
-                };
-
-                try { 
+    if (!isSpeaking) {
+        setTimeout(() => {
+            try {
+                recognition.start();
+            } catch(e){}
+        }, 300);
+    }
+}; 
                     recognition.start(); 
                     document.getElementById('statusText').innerText = 'متصل وجاهز للأوامر';
                 } catch(e){}
@@ -165,9 +169,20 @@
                 if ('speechSynthesis' in window) {
                     window.speechSynthesis.cancel();
                     const utterance = new SpeechSynthesisUtterance(text);
-                    utterance.lang = 'ar-SA';
+utterance.lang = 'ar-SA';
 
-                    utterance.onend = function() {
+utterance.onstart = function() {
+    isSpeaking = true;
+
+    try {
+        recognition.stop();
+    } catch(e) {}
+
+    document.getElementById('siriOrb').className = 'siri-orb speaking-orb';
+    document.getElementById('statusText').innerText = 'يتحدث...';
+};
+
+utterance.onend = function() {
     isSpeaking = false;
 
     document.getElementById('siriOrb').className = 'siri-orb';
@@ -175,9 +190,8 @@
 
     try {
         recognition.start();
-    } catch (e) {}
+    } catch(e) {}
 };
-
                     window.speechSynthesis.speak(utterance);
                 }
             }
