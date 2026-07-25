@@ -1,36 +1,30 @@
-"""
-NIKLLIS AI
-"""
-
-import random
-
-
 class AI:
-
     def __init__(self):
-        self.owner = "سيف"
+        self.name = "NIKLLIS AI"
+        self.version = "1.0"
 
-        self.happy = [
-            "تحت أمرك يا سيف.",
-            "أنا معك.",
-            "ماذا تريد؟",
-            "يسعدني مساعدتك."
-        ]
+    def chat(self, text):
+        text = text.lower().strip()
 
-        self.sad = [
-            "واضح إنك متضايق، هل أقدر أساعد؟",
-            "إن شاء الله الأمور تتحسن.",
-            "أنا معك."
-        ]
+        if "اسمك" in text:
+            return "اسمي NIKLLIS AI."
 
-    def reply(self, text):
+        elif "ازيك" in text or "عامل ايه" in text:
+            return "أنا بخير، سعيد بالتحدث معك."
 
-        text = text.lower()
+        elif "الوقت" in text:
+            from datetime import datetime
+            return "الوقت الآن " + datetime.now().strftime("%H:%M")
 
-        if "بحبك" in text:
-            return "وأنا سعيد أني معك يا سيف."
+        elif "التاريخ" in text:
+            from datetime import datetime
+            return datetime.now().strftime("%Y-%m-%d")
 
-        if "زعلان" in text:
-            return random.choice(self.sad)
+        elif "شكرا" in text:
+            return "العفو، أنا دائماً معك."
 
-        return random.choice(self.happy)
+        elif "سلام" in text:
+            return "إلى اللقاء."
+
+        else:
+            return None
