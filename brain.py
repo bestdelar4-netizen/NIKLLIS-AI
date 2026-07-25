@@ -1,14 +1,9 @@
-"""
-NIKLLIS AI Brain
-"""
-
 from datetime import datetime
 
 
 class Brain:
 
     def __init__(self):
-        self.name = "NIKLLIS"
         self.owner = "سيف"
 
     def think(self, text):
@@ -16,34 +11,24 @@ class Brain:
         text = text.lower().strip()
 
         if not text:
-            return "أنا معك يا سيف."
+            return "تحت أمرك يا سيف."
 
-        # التحية
-        if "السلام" in text or "اهلا" in text or "ازيك" in text:
-            return f"أهلاً يا {self.owner}."
+        if "ازيك" in text:
+            return "أنا بخير يا سيف."
 
-        # الاسم
         if "اسمك" in text:
-            return "اسمي NIKLLIS."
+            return "أنا NIKLLIS."
 
-        # الوقت
-        if "الوقت" in text or "الساعة" in text:
-            return datetime.now().strftime("الوقت الآن %H:%M")
+        if "مين انت" in text:
+            return "أنا مساعدك الشخصي."
 
-        # التاريخ
+        if "الوقت" in text:
+            return datetime.now().strftime("%H:%M")
+
         if "التاريخ" in text:
             return datetime.now().strftime("%Y-%m-%d")
 
-        # الحب 😄
         if "بحبك" in text:
-            return "وأنا سعيد أني معاك يا سيف."
-
-        # من أنت
-        if "مين انت" in text:
-            return "أنا مساعدك الذكي NIKLLIS."
-
-        # وداع
-        if "مع السلامه" in text:
-            return "أشوفك قريب يا سيف."
+            return "وأنا سعيد أني معاك."
 
         return None
