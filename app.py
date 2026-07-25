@@ -1,7 +1,7 @@
 """
 NIKLLIS-AI - Siri Experience + Interactive Floating Pet
 """
-
+from ai import AI
 import json
 import os
 from datetime import datetime
@@ -82,6 +82,7 @@ class NikllisCore:
 core = NikllisCore()
 brain = Brain()
 commands = Commands()
+ai = AI()
 
 @app.route("/")
 def home():
@@ -302,6 +303,8 @@ def process():
     # التفكير والرد
     reply = brain.think(cmd)
 
+if reply is None:
+    reply = ai.reply(cmd)
     if reply is None:
         reply = core.process(cmd)
 
