@@ -167,16 +167,16 @@
                     const utterance = new SpeechSynthesisUtterance(text);
                     utterance.lang = 'ar-SA';
 
-                    utterance.onstart = function() {
-                        isSpeaking = true;
-                        document.getElementById('siriOrb').className = 'siri-orb speaking-orb';
-                        document.getElementById('statusText').innerText = 'تتحدث...';
-                    };
                     utterance.onend = function() {
-                        isSpeaking = false;
-                        document.getElementById('siriOrb').className = 'siri-orb';
-                        document.getElementById('statusText').innerText = 'تستمع...';
-                    };
+    isSpeaking = false;
+
+    document.getElementById('siriOrb').className = 'siri-orb';
+    document.getElementById('statusText').innerText = 'تستمع...';
+
+    try {
+        recognition.start();
+    } catch (e) {}
+};
 
                     window.speechSynthesis.speak(utterance);
                 }
