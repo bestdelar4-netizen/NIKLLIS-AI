@@ -11,13 +11,15 @@ class Commands:
 
         text = text.lower().strip()
 
-        # الاتصال
+        # ===== الاتصال =====
         if "رن" in text or "اتصل" in text:
+
             name = (
                 text.replace("رن على", "")
-                .replace("رن", "")
+                .replace("رنلي على", "")
                 .replace("اتصل على", "")
                 .replace("اتصل", "")
+                .replace("رن", "")
                 .strip()
             )
 
@@ -27,28 +29,35 @@ class Commands:
                 "reply": f"حاضر يا سيف، جاري الاتصال بـ {name}"
             }
 
-        # واتساب
+        # ===== واتساب =====
         if "واتساب" in text:
             return {
                 "action": "whatsapp",
                 "reply": "جاري فتح واتساب."
             }
 
-        # يوتيوب
+        # ===== يوتيوب =====
         if "يوتيوب" in text:
             return {
                 "action": "youtube",
                 "reply": "جاري فتح يوتيوب."
             }
 
-        # الكاميرا
+        # ===== الكاميرا =====
         if "الكاميرا" in text:
             return {
                 "action": "camera",
                 "reply": "جاري فتح الكاميرا."
             }
 
-        # الكشاف
+        # ===== الإعدادات =====
+        if "الاعدادات" in text or "الإعدادات" in text:
+            return {
+                "action": "settings",
+                "reply": "جاري فتح الإعدادات."
+            }
+
+        # ===== الكشاف =====
         if "الكشاف" in text:
             return {
                 "action": "flash",
