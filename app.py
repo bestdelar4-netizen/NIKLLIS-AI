@@ -114,18 +114,19 @@ def process():
         return jsonify(result)
 
     # التفكير والرد
-reply = brain.think(cmd)
+    reply = brain.think(cmd)
 
-if reply is None:
-    reply = ai.chat(cmd)
+    if reply is None:
+        reply = ai.chat(cmd)
 
-if reply is None:
-    reply = core.process(cmd)
+    if reply is None:
+        reply = core.process(cmd)
 
-return jsonify({
-    "reply": reply,
-    "action": ""
-})
+    return jsonify({
+        "reply": reply,
+        "action": ""
+    })
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
