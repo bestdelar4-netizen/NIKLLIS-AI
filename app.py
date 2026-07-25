@@ -6,6 +6,8 @@ import json
 import os
 from datetime import datetime
 from flask import Flask, jsonify, request
+from brain import Brain
+from commands import Commands
 
 app = Flask(__name__)
 
@@ -78,7 +80,8 @@ class NikllisCore:
 
 
 core = NikllisCore()
-
+brain = Brain()
+commands = Commands()
 
 @app.route("/")
 def home():
@@ -274,9 +277,38 @@ def home():
 
 @app.route("/process")
 def process():
+
     cmd = request.args.get("cmd", "")
-    reply = core.process(cmd)
-    return jsonify({"reply": reply})
+
+    # تنظيف كلمة النداء
+    cmd = (
+        cmd.replace("يا نيكليس", "")
+        .replace("نيكليس", "")
+        .replace("يا سيري", "")
+        .replace("سيري", "")
+        .strip()
+    )
+
+    # تنفيذ أوامر النظام
+    result = commands.execute(cmd)
+
+    if result:
+
+        if result["action"] == "call":
+            os.system(f'termux-telephony-call "{result["target"]}"')
+
+        return jsonify(result)
+
+    # التفكير والرد
+    reply = brain.think(cmd)
+
+    if reply is None:
+        reply = core.process(cmd)
+
+    return jsonify({
+        "reply": reply,
+        "action": ""
+    })
 
 
 if __name__ == "__main__":
