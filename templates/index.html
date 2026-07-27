@@ -129,10 +129,10 @@
         }, 300);
     }
 }; 
-                    recognition.start(); 
-                    document.getElementById('statusText').innerText = 'متصل وجاهز للأوامر';
-                } catch(e){}
-            }
+                    try {
+    recognition.start();
+    document.getElementById('statusText').innerText = 'متصل وجاهز للأوامر';
+} catch (e) {}
 
             function feedPet(e) {
                 e.stopPropagation();
