@@ -99,40 +99,46 @@
             let isSpeaking = false;
 
             function initVoiceSystem() {
-                if (isStarted) return;
-                isStarted = true;
-                
-                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-                if (!SpeechRecognition) return alert('المتصفح لا يدعم التعرف الصوتي');
+    if (isStarted) return;
+    isStarted = true;
 
-                recognition = new SpeechRecognition();
-                recognition.lang = 'ar-SA';
-                recognition.continuous = true;
-                recognition.interimResults = false;
-
-                recognition.onstart = function() {
-                    document.getElementById('statusText').innerText = 'سيري تستمع إليك الآن...';
-                };
-
-                recognition.onresult = function(event) {
-                    if (isSpeaking) return;
-                    const text = event.results[event.results.length - 1][0].transcript.trim();
-                    handleCommand(text);
-                };
-
-                recognition.onend = function() {
-    if (!isSpeaking) {
-        setTimeout(() => {
-            try {
-                recognition.start();
-            } catch(e){}
-        }, 300);
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+        alert('المتصفح لا يدعم التعرف الصوتي');
+        return;
     }
-}; 
-                    try {
-    recognition.start();
-    document.getElementById('statusText').innerText = 'متصل وجاهز للأوامر';
-} catch (e) {}
+
+    recognition = new SpeechRecognition();
+    recognition.lang = 'ar-SA';
+    recognition.continuous = true;
+    recognition.interimResults = false;
+
+    recognition.onstart = function () {
+        document.getElementById('statusText').innerText = 'سيري تستمع إليك الآن...';
+    };
+
+    recognition.onresult = function (event) {
+        if (isSpeaking) return;
+
+        const text = event.results[event.results.length - 1][0].transcript.trim();
+        handleCommand(text);
+    };
+
+    recognition.onend = function () {
+        if (!isSpeaking) {
+            setTimeout(() => {
+                try {
+                    recognition.start();
+                } catch (e) {}
+            }, 300);
+        }
+    };
+
+    try {
+        recognition.start();
+        document.getElementById('statusText').innerText = 'متصل وجاهز للأوامر';
+    } catch (e) {}
+}
 
             function feedPet(e) {
                 e.stopPropagation();
